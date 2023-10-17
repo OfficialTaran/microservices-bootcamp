@@ -3,6 +3,80 @@ Transform:
   - AWS::Serverless-2016-10-31
 
 Resources:
+  # ##############################################################################
+  # Front End
+  myDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !Sub "${StaticBucket}.s3.${AWS::Region}.amazonaws.com"
+            Id: static-bucket
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}"
+          - Id: api-gateway
+            DomainName: !Sub "${BackendApi}.execute-api.${AWS::Region}.amazonaws.com"
+            CustomOriginConfig:
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+            OriginPath: /Prod
+        DefaultCacheBehavior:
+          Compress: true
+          ForwardedValues:
+            QueryString: false
+          TargetOriginId: static-bucket
+          ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviors:
+          - TargetOriginId: api-gateway
+            PathPattern: /api/*
+            ViewerProtocolPolicy: redirect-to-https
+            # CachingDisabled
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            # AllViewerExceptHostHeader
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - PUT
+              - PATCH
+              - POST
+              - DELETE
+        DefaultRootObject: index.html
+        Enabled: true
+        HttpVersion: http2
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: 'CloudFront OAI for Static App'
+  StaticBucket:
+    Type: 'AWS::S3::Bucket'
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref StaticBucket
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject 
+            Effect: Allow
+            Resource: !Sub "arn:aws:s3:::${StaticBucket}/*"
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId
+
+  BackendApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors: "'*'"
+
+  # ##############################################################################
+  # Functions         
   helloFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -29,3 +103,17 @@ Resources:
           Properties:
             Path: /api/msg
             Method: POST   
+
+Outputs:
+  WebEndpoint:
+    Description: API Gateway endpoint URL for Prod stage
+    Value: !Sub "https://${BackendApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  S3BucketSecureURL:
+    Value: !Sub "https://${StaticBucket.DomainName}"
+    Description: Domain Name of S3 bucket to holding Front End Content
+  SiteURL:
+    Value: !Sub "https://${myDistribution.DomainName}"
+    Description: URL of the Application
+  BucketName:
+    Value: !Ref StaticBucket
+    Description: Name of S3 bucket holding Front End Content. For aws s3 sync
