@@ -1,5 +1,9 @@
 {
   "scripts": {
-    "start": "sam local start-api --warm-containers EAGER"
+    "local-db": "docker compose -f utils/docker-compose.yml up -d",
+    "sample-data": "pwsh ./utils/HydrateLocalDB.ps1 -create_tables",
+    "start": "sam local start-api --warm-containers EAGER --docker-network utils_sam_bridge",
+    "deploy": "sam deploy",
+    "cleanup-docker": "pwsh ./utils/RemoveAllContainers.ps1"
   }
 }
