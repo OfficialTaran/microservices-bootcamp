@@ -77,34 +77,59 @@ Resources:
 
   # ##############################################################################
   # Functions         
-  helloFunction:
+  productsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.handler
+      Handler: index.rootHandler
       Runtime: nodejs18.x
-      CodeUri: src/hello
+      CodeUri: src/Products
       Timeout: 10
       Events:
         Api:
           Type: Api
           Properties:
             RestApiId: !Ref BackendApi
-            Path: /api/hello
+            Path: /api/products
             Method: GET
-  msgFunction:
+        ApiID:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/products/{id}
+            Method: GET
+  OrdersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.handler
+      Handler: index.rootHandler
       Runtime: nodejs18.x
-      CodeUri: src/msg
+      CodeUri: src/Orders
       Timeout: 10
       Events:
         Api:
           Type: Api
           Properties:
             RestApiId: !Ref BackendApi
-            Path: /api/msg
-            Method: POST   
+            Path: /api/orders
+            Method: GET
+        ApiPost:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/orders
+            Method: POST
+        ApiID:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/orders/{id}
+            Method: GET
+        ApiDelete:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/orders/{id}
+            Method: DELETE
+
 
 Outputs:
   WebEndpoint:
