@@ -1,4 +1,4 @@
-export const handler = async (event) => {
+export const rootHandler = async (event) => {
   const response = {
     statusCode: 200,
     body: JSON.stringify({
