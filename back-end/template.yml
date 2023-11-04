@@ -76,7 +76,18 @@ Resources:
       Cors: "'*'"
 
   # ##############################################################################
-  # Functions         
+  # Functions       
+
+  SharedLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: SharedLayer
+      Description: shared code for our backned
+      ContentUri: common-layer
+      CompatibleRuntimes:
+        - nodejs18.x
+      RetentionPolicy: Delete
+
   productsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -84,6 +95,8 @@ Resources:
       Runtime: nodejs18.x
       CodeUri: src/Products
       Timeout: 10
+      Layers:
+        - !Ref SharedLayer
       Events:
         Api:
           Type: Api
@@ -104,6 +117,8 @@ Resources:
       Runtime: nodejs18.x
       CodeUri: src/Orders
       Timeout: 10
+      Layers:
+        - !Ref SharedLayer
       Events:
         Api:
           Type: Api

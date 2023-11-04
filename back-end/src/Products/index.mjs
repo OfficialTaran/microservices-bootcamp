@@ -1,8 +1,12 @@
+import { helloFunction } from "/opt/nodejs/Utils.mjs";
+
 export const rootHandler = async (event) => {
+  const hello = helloFunction()
+
   const response = {
     statusCode: 200,
     body: JSON.stringify({
-      msg: "hello world, I'm the first local function of the course!"
+      msg: hello
     }),
   };
   return response;
