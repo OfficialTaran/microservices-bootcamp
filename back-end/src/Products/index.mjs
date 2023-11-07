@@ -1,13 +1,11 @@
-import { helloFunction } from "/opt/nodejs/Utils.mjs";
+import { Statement } from "/opt/nodejs/dynamoDB.mjs";
 
 export const rootHandler = async (event) => {
-  const hello = helloFunction()
+  const result = await Statement('SELECT * FROM products')
 
   const response = {
     statusCode: 200,
-    body: JSON.stringify({
-      msg: hello
-    }),
+    body: JSON.stringify(result),
   };
   return response;
 };
