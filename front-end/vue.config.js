@@ -14,7 +14,8 @@ module.exports = defineConfig({
     resolve: {
       extensions: ['.js','.vue'],
       alias: {
-        '@utils': path.resolve(__dirname,'src/utils')
+        '@utils': path.resolve(__dirname,'src/utils'),
+        '@common': path.resolve(__dirname,'src/components/common')
       }
     }
   }
