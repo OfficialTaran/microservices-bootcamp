@@ -7,22 +7,42 @@
         :key="`list_item_${key}`"
         :title="item.name"
         class="m-2 card"
-      />
+      >
+        <div class="d-flex justify-content-end">
+          <Icon
+            icon="info-circle"
+            @click="openProductInfo(item.id)"
+          />
+        </div>
+      </b-card>
     </div>
+    <ProductInfo
+      ref="product-info-modal"
+      @close="selected_id = null"
+    />
   </div>
 </template>
 
 <script>
   import { mapState } from 'vuex'
   import Spinner from '@common/LoadingSpinner.vue'
+  import Icon from '@common/Icon.vue'
+  import ProductInfo from './ProductInfo.vue'
 
   export default {
     name: 'ProductsMain',
     components: {
-      Spinner
+      Spinner,
+      Icon,
+      ProductInfo
     },
     async created () {
       await this.load()
+    },
+    data () {
+      return {
+        selected_id: null
+      }
     },
     computed: {
       ...mapState({
@@ -33,6 +53,10 @@
     methods: {
       async load () {
         await this.$store.dispatch('products/listProducts')
+      },
+      openProductInfo ( id ) {
+        this.selected_id = id
+        this.$refs['product-info-modal'].open(id)
       }
     }
   }
