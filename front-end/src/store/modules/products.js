@@ -9,7 +9,8 @@ const state = {
 
 // actions can be async but can't update state
 const actions = {
-  async listProducts ({ commit }) {
+  async listProducts ({ commit, state }) {
+    if (JSON.stringify(state.product_list) !== '[]') return
 
     commit('setLoading', { loading: true })
 
@@ -20,7 +21,10 @@ const actions = {
     commit('setProductList', { products })
     commit('setLoading', { loading: false })
   },
-  async getProduct ({ commit }, { id }) {
+  async getProduct ({ commit, state }, { id }) {
+    if ((JSON.stringify(state.product) !== '{}') &&
+      (state.product.id === id)) return
+
 
     commit('setProductLoading', {loading: true})
 

@@ -6,17 +6,34 @@
         :title="loading ? null : product.name"
         ok-only
       >
-        <div>{{ product }}</div>
-        <div>{{ product_info }}</div>
+        <ModalInput
+          v-for="(item, key) in product_info"
+          :key="`info_${key}`"
+          :loading="loading"
+          :label="item.label"
+          :value="item.value"
+        />
+        <div class="mt-2 mb-1 title" >Dimensions:</div>
+        <ModalInput
+          v-for="(item, key) in dimensions"
+          :key="`dimensions_${key}`"
+          :loading="loading"
+          :label="item.label"
+          :value="item.value"
+        />
       </b-modal> 
   </div>
 </template>
     
 <script>
 import { mapState } from 'vuex'
+import ModalInput from '@common/ModalInput.vue'
 
 export default {
   name: 'ProductInfo',
+  components: {
+    ModalInput
+  },
   computed: {
     ...mapState({
       product: state => state.products.product,
@@ -45,7 +62,7 @@ export default {
           value: this.product.id
         },
         {
-          lable: 'In Stock',
+          label: 'In Stock',
           value: this.product.in_stock
         }
       ]

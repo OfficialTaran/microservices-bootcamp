@@ -14,14 +14,17 @@ export default {
   }
 }
 </script>
-
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.clickable {
+  cursor: pointer;
+}
+.inline-card-text {
+  font-size: 20px;
+}
+.label {
+  font-weight: 500;
+}
+.title {
+  font-weight: 700;
 }
 </style>
