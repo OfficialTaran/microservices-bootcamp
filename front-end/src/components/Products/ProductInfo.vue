@@ -43,15 +43,15 @@ export default {
       return [
         {
           label: 'Length',
-          value: this.product.nominal_dimensions ? this.product.nominal_dimensions.length: null
+          value: this.product.nominal_dimensions ? this.product.nominal_dimensions.length : null
         },
         {
           label: 'Thickness',
-          value: this.product.nominal_dimensions ? this.product.nominal_dimensions.thickness: null
+          value: this.product.nominal_dimensions ? this.product.nominal_dimensions.thickness : null
         },
         {
           label: 'Width',
-          value: this.product.nominal_dimensions ? this.product.nominal_dimensions.width: null
+          value: this.product.nominal_dimensions ? this.product.nominal_dimensions.width : null
         }
       ]
     },
