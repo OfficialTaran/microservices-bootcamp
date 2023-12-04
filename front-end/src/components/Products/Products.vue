@@ -10,6 +10,9 @@
       >
         <div class="d-flex justify-content-end">
           <Icon
+            tooltip="Product Info"
+            variant="info"
+            scale="1.5"
             icon="info-circle"
             @click="openProductInfo(item.id)"
           />

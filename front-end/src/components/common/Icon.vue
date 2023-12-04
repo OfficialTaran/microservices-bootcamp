@@ -1,10 +1,13 @@
 <template>
-  <div>
+  <div
+    v-b-tooltip.hover
+    :title="tooltip"
+  >
     <b-icon
       class="mx-1 clickable"
-      variant="info"
+      :variant="variant"
       :icon="icon"
-      font-scale="1.5"
+      :font-scale="scale"
       @click="$emit('click')"
     />
   </div>
@@ -17,6 +20,18 @@ export default {
     icon: {
       type: String,
       default: 'exclamation-circle-fill'
+    },
+    tooltip: {
+      type: String,
+      default: ''
+    },
+    scale: {
+      type: String,
+      default: '1'
+    },
+    variant: {
+      type: String,
+      default: ''
     }
   }
 }
