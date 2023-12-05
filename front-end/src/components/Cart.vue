@@ -78,7 +78,7 @@
     >
       <div class="d-flex flex-wrap justify-content-center">
         <b-form-input 
-          :value="item_quantity" 
+          v-model="item_quantity" 
           type="number"
           size="lg"
           class="w-50 px-3"
@@ -119,10 +119,18 @@ export default {
         return item
       })
     },
-    item_quantity () {
-      return this.selected_id ?
+    item_quantity: {
+      get () {
+        return this.selected_id ?
         this.cart.find(item => item.id === this.selected_id).quantity :
         1
+      },
+      set ( val ) {
+        this.$store.commit('cart/updateQuantity', {
+          id: this.selected_id,
+          quantity: Number(val)
+        })
+      }
     }
   },
   methods: {

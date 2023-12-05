@@ -1,9 +1,34 @@
+// import { makeAPICall } from "@utils/api.js"
+
 const state = {
   cart: [],
   placing_order: false
 }
 
-const actions = {}
+const actions = {
+  async placeOrder({ commit, state }) {
+    const order = {
+      goods_ordered: state.cart.map(item => {
+        return {
+          quantity: item.quantity,
+          product_id: item.id
+        }
+      })
+    }
+
+    console.log(order)
+
+    commit('updatePlacingOrder', { placing_order: true })
+    // await makeAPICall({
+    //   route: '/api/orders',
+    //   verb: 'POST',
+    //   data: order
+    // })
+    commit('updatePlacingOrder', { placing_order: false })
+    commit('emptyCart')
+
+  }
+}
 
 const mutations = {
   addToCart ( state, { id, quantity }) {

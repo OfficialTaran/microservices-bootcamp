@@ -16,12 +16,22 @@
             icon="info-circle"
             @click="openProductInfo(item.id)"
           />
+          <Icon
+            tooltip="Add To Cart"
+            scale="1.5"
+            icon="cart-3"
+            @click="openAddToCart(item.id)"
+          />
         </div>
       </b-card>
     </div>
     <ProductInfo
       ref="product-info-modal"
       @close="selected_id = null"
+    />
+    <AddToCart
+      ref="add-to-cart-modal"
+      :id="selected_id"
     />
   </div>
 </template>
@@ -31,13 +41,15 @@
   import Spinner from '@common/LoadingSpinner.vue'
   import Icon from '@common/Icon.vue'
   import ProductInfo from './ProductInfo.vue'
+  import AddToCart from './AddToCart.vue'
 
   export default {
     name: 'ProductsMain',
     components: {
       Spinner,
       Icon,
-      ProductInfo
+      ProductInfo,
+      AddToCart
     },
     async created () {
       await this.load()
@@ -60,6 +72,10 @@
       openProductInfo ( id ) {
         this.selected_id = id
         this.$refs['product-info-modal'].open(id)
+      },
+      openAddToCart ( id ) {
+        this.selected_id = id
+        this.$refs['add-to-cart-modal'].open()
       }
     }
   }

@@ -3,6 +3,8 @@
      <b-modal
         ref="add-modal"
         title="Add To Cart"
+        @ok="AddToCart"
+        ok-title="Add"
       >
         <div class="d-flex flex-wrap justify-content-center">
           <b-form-input 
@@ -48,6 +50,13 @@ export default {
   methods: {
     open () {
       this.$refs['add-modal'].show()
+    },
+    AddToCart () {
+      this.$store.commit('cart/addToCart', {
+        id: this.id,
+        quantity: this.quantity
+      })
+      this.quantity = 1
     }
   }
 }
