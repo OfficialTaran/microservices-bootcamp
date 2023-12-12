@@ -1,4 +1,6 @@
 import { validateObject } from '/opt/nodejs/ObjectValidation/index.mjs'
+import { InsertItem } from '/opt/nodejs/dynamoDB.mjs'
+import { PromiseHandler } from '/opt/nodejs/Utils.mjs'
 
 export const rootHandler = async (event) => {
 
@@ -33,10 +35,10 @@ const handlers = {
       }
     }
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(validation_data),
-    };
+    return PromiseHandler(InsertItem({
+      TableName: 'orders',
+      data
+    }))
   }
 }
   
