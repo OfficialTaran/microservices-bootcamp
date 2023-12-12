@@ -1,3 +1,5 @@
+import { validateObject } from '/opt/nodejs/ObjectValidation/index.mjs'
+
 export const rootHandler = async (event) => {
 
   const user_id = '1'
@@ -19,10 +21,21 @@ const handlers = {
 
     const data = { ...body, ...defined_data }
 
+    const validation_data = validateObject({
+      schema: 'orders',
+      object: data
+    })
+
+    if ( validation_data.length > 0 ) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ errors: validation_data })
+      }
+    }
 
     return {
       statusCode: 200,
-      body: JSON.stringify(data),
+      body: JSON.stringify(validation_data),
     };
   }
 }
