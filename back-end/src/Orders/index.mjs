@@ -71,7 +71,7 @@ const handlers = {
   DELETE: async ({ id = null, user_id }) => {
 
     try {
-      const order = await Statement(`SELECT goods_ordered, state, customer FROM orders WHERE id=${id}`)
+      const order = await Statement(`SELECT goods_ordered, state, customer FROM orders WHERE id='${id}'`)
         .then( orders => orders[0])
 
       if (! cancellable_state.includes(order.state)) {
