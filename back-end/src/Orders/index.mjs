@@ -1,6 +1,7 @@
 import { validateObject } from '/opt/nodejs/ObjectValidation/index.mjs'
-import { InsertItem } from '/opt/nodejs/dynamoDB.mjs'
+import { InsertItem, Statement } from '/opt/nodejs/dynamoDB.mjs'
 import { PromiseHandler } from '/opt/nodejs/Utils.mjs'
+import { BadProductIDError, InvalidQuantityError } from '/opt/nodejs/Errors.mjs';
 
 export const rootHandler = async (event) => {
 
@@ -35,6 +36,28 @@ const handlers = {
       }
     }
 
+    try {
+      await updateProducts({ goods_ordered: data.goods_ordered })
+    } catch (error) {
+      if(['InvalidQuantityError','BadProductIDError'].includes(error.name)) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            msg: error.message
+          })
+        }
+      } else {
+        console.error(error)
+        return {
+          statusCode: 500,
+          body: JSON.stringify({
+            msg: 'Internal Service Error'
+          })
+        }
+      }
+    }
+    
+
     return PromiseHandler(InsertItem({
       TableName: 'orders',
       data
@@ -42,3 +65,51 @@ const handlers = {
   }
 }
   
+const updateProducts = async ({ goods_ordered, operation = 'subtract' }) => {
+
+  const products = await Statement('SELECT id, in_stock FROM products')
+
+  const order_quantities = []
+  goods_ordered.forEach(item => {
+    const product = products.find(p => p.id === item.product_id)
+
+    if (product === undefined) {
+      throw new BadProductIDError(`product with ID: ${item.product_id} not found`)
+    }
+
+    const index = order_quantities.findIndex(i => i.product_id === item.product_id)
+    if (index === -1) {
+      order_quantities.push({
+        product_id: item.product_id,
+        quantity: Number(item.quantity)
+      })
+    } else {
+      order_quantities[index].quantity += item.quantity
+    }
+  })
+
+  if ( operation === 'subtract' ) {
+    order_quantities.forEach(item => {
+      const product = products.find(p => p.id === item.product_id)
+
+      if (product.in_stock < item.quantity) {
+        throw new InvalidQuantityError(`product ${item.product_id} in_stock less than ordered quantity`)
+      }
+    })
+  }
+
+  const operator = operation_map[operation]
+
+  const promises = order_quantities.map(item => {
+    return Statement(`UPDATE products SET in_stock = in_stock ${operator} ? WHERE id=?`,
+      [item.quantity,item.product_id])
+  })
+
+  return await Promise.all(promises)
+  
+}
+
+const operation_map = {
+  subtract: '-',
+  add: '+'
+}
