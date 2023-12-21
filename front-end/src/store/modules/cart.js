@@ -1,4 +1,4 @@
-// import { makeAPICall } from "@utils/api.js"
+import { makeAPICall } from "@utils/api.js"
 
 const state = {
   cart: [],
@@ -19,13 +19,14 @@ const actions = {
     console.log(order)
 
     commit('updatePlacingOrder', { placing_order: true })
-    // await makeAPICall({
-    //   route: '/api/orders',
-    //   verb: 'POST',
-    //   data: order
-    // })
+    await makeAPICall({
+      route: '/api/orders',
+      verb: 'POST',
+      data: order
+    })
     commit('updatePlacingOrder', { placing_order: false })
     commit('emptyCart')
+    commit('products/setProductList',{ products: [] }, { root: true })
 
   }
 }

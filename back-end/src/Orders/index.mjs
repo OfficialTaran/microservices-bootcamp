@@ -11,6 +11,11 @@ export const rootHandler = async (event) => {
   return handlers[event.httpMethod]({ body, user_id })
 };
 
+const cancellable_state = [
+  'needs_picked',
+  'staged'
+]
+
 const handlers = {
   POST: async ({ body = null, user_id }) => {
     const date_now = new Date()
@@ -62,6 +67,45 @@ const handlers = {
       TableName: 'orders',
       data
     }))
+  },
+  DELETE: async ({ id = null, user_id }) => {
+
+    try {
+      const order = await Statement(`SELECT goods_ordered, state, customer FROM orders WHERE id=${id}`)
+        .then( orders => orders[0])
+
+      if (! cancellable_state.includes(order.state)) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            msg: `Can't cancel order in state ${order.state}`
+          })
+        }
+      }
+
+      if ( order.customer !== user_id ) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ msg: `Can't access info for order ${id}` })
+        }
+      }
+
+      await updateProducts({ goods_ordered: order.goods_ordered, operation: 'add' })
+    } catch (error) {
+      console.error(error)
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          msg: 'Internal Service Error'
+        })
+      }
+    }
+
+
+    return await PromiseHandler(
+      Statement('UPDATE orders SET state=? SET staging_location=? WHERE id=?',
+      ['cancelled','none',id])
+    )
   }
 }
   
