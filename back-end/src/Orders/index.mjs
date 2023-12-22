@@ -134,13 +134,14 @@ const handlers = {
 }
   
 const updateProducts = async ({ goods_ordered, operation = 'subtract' }) => {
-
+  // get products
   const products = await Statement('SELECT id, in_stock FROM products')
 
   const order_quantities = []
   goods_ordered.forEach(item => {
     const product = products.find(p => p.id === item.product_id)
 
+    // error if one of the IDs is not found
     if (product === undefined) {
       throw new BadProductIDError(`product with ID: ${item.product_id} not found`)
     }
@@ -157,6 +158,7 @@ const updateProducts = async ({ goods_ordered, operation = 'subtract' }) => {
   })
 
   if ( operation === 'subtract' ) {
+    // Ensure quantities are valid
     order_quantities.forEach(item => {
       const product = products.find(p => p.id === item.product_id)
 
@@ -168,11 +170,13 @@ const updateProducts = async ({ goods_ordered, operation = 'subtract' }) => {
 
   const operator = operation_map[operation]
 
+  // update quantities in products table
   const promises = order_quantities.map(item => {
     return Statement(`UPDATE products SET in_stock = in_stock ${operator} ? WHERE id=?`,
       [item.quantity,item.product_id])
   })
 
+  // await promise map of update statements
   return await Promise.all(promises)
   
 }

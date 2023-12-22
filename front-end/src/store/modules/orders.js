@@ -9,6 +9,7 @@ const state = {
 
 const actions = {
   async listOrders ({ commit, state }, reset_cache = false) {
+    // ignore if cached
     if (JSON.stringify(state.order_list) !== '[]'
       && !reset_cache) return
 
@@ -22,6 +23,7 @@ const actions = {
   },
   async getOrder ({ commit, state }, { id }) {
 
+    // ignore if cached
     if ((JSON.stringify(state.order) !== '{}')
       && (state.order.id === id)) return
 
