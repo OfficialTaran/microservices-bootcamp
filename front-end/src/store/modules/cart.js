@@ -26,6 +26,7 @@ const actions = {
     })
     commit('updatePlacingOrder', { placing_order: false })
     commit('emptyCart')
+    commit('orders/setOrderList',{ orders: [] },{root: true})
     commit('products/setProductList',{ products: [] }, { root: true })
 
   }

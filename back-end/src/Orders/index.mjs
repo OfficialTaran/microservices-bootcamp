@@ -7,16 +7,40 @@ export const rootHandler = async (event) => {
 
   const user_id = '1'
   const body = JSON.parse(event.body || '{}')
+  const id = (event.pathParameters && ('id' in event.pathParameters)) ?
+    event.pathParameters.id : null
 
-  return handlers[event.httpMethod]({ body, user_id })
-};
+  return await handlers[event.httpMethod]({ id, body, user_id })
+}
 
-const cancellable_state = [
+const state_map = {
+  needs_picked: 'In Progress',
+  staged: 'Ready For Pickup',
+  complete: 'Complete',
+  cancelled: 'Cancelled'
+}
+
+const cancellable_states = [
   'needs_picked',
   'staged'
 ]
 
 const handlers = {
+  GET : async ({ id = null, user_id }) => {
+    const response = id ?
+      Statement(`SELECT state, date_created, id, goods_ordered FROM orders WHERE id='${id}'`) :
+      Statement(`SELECT state, date_created, id, customer FROM orders WHERE customer='${user_id}'`)
+
+    return await PromiseHandler(response.then(data => {
+      data = data.map(item => {
+        item.state = state_map[item.state]
+        return item
+      })
+      if (id) data = data[0]
+
+      return data
+    }))
+  },
   POST: async ({ body = null, user_id }) => {
     const date_now = new Date()
 
@@ -74,11 +98,11 @@ const handlers = {
       const order = await Statement(`SELECT goods_ordered, state, customer FROM orders WHERE id='${id}'`)
         .then( orders => orders[0])
 
-      if (! cancellable_state.includes(order.state)) {
+      if (! cancellable_states.includes(order.state)) {
         return {
           statusCode: 400,
           body: JSON.stringify({
-            msg: `Can't cancel order in state ${order.state}`
+            msg: `Can't cancel order in state ${state_map[order.state]}`
           })
         }
       }

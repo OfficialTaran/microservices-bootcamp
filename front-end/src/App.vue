@@ -13,6 +13,7 @@
 import Products from './components/Products/Products.vue'
 import NavBar from './components/NavBar.vue'
 import Cart from './components/Cart.vue'
+// import Orders from './components/Orders/Orders.vue'
 
 export default {
   name: 'App',
