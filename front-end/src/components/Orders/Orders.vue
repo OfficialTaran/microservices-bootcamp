@@ -11,7 +11,26 @@
         class="mt-2"
       >
         <div class="d-flex justify-content-between">
-          {{ item }}
+          <div class="inline-card-text">
+            {{ displayDate(item.date_created) }} - {{ item.state }}
+          </div>
+          <div class="d-flex justify-content-end">
+            <Icon
+              tooltip="Order Info"
+              variant="info"
+              icon="info-circle"
+              scale="2"
+              @click="openOrderModal(item.id)"
+            />
+            <Icon
+              v-if="canCancel(item.state)"
+              tooltip="Cancel Order"
+              variant="danger"
+              scale="2"
+              icon="x-square"
+              @click="openConfirmCancelModal(item.id)"
+            />
+          </div>
         </div>
       </b-card>
     </div>
@@ -23,9 +42,16 @@
 
 <script>
 
+const cancellable_states = [
+  'In Progress',
+  'Ready For Pickup'
+]
+
 import { mapState } from 'vuex'
+import { displayDate } from '@utils/date.js'
 import OrderInfo from './OrderInfo.vue'
 import Spinner from '@common/LoadingSpinner.vue'
+import Icon from '@common/Icon.vue'
 
 export default {
   name: 'OrdersMain',
@@ -34,7 +60,8 @@ export default {
   },
   components: {
     OrderInfo,
-    Spinner
+    Spinner,
+    Icon
   },
   computed: {
     ...mapState({
@@ -43,11 +70,24 @@ export default {
     })
   },
   methods: {
+    displayDate,
     async load () {
       await this.$store.dispatch('orders/listOrders')
     },
     async openOrderModal ( id ) {
       this.$refs['order-info-modal'].open(id)
+    },
+    openConfirmCancelModal ( id ) {
+      this.$bvModal.msgBoxConfirm(
+        `Please confirm that you want to cancel order ${id}`, {
+          title: 'Please Confirm'
+        }
+      ).then(value => {
+        if (value) this.$store.dispatch('orders/cancelOrder', { id })
+      })
+    },
+    canCancel( state ) {
+      return cancellable_states.includes(state)
     }
   }
 }
