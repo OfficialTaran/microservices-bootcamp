@@ -144,6 +144,34 @@ Resources:
             RestApiId: !Ref BackendApi
             Path: /api/orders/{id}
             Method: DELETE
+  shipmentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.rootHandler
+      Runtime: nodejs18.x
+      CodeUri: src/Shipments
+      Timeout: 10
+      Layers:
+        - !Ref SharedLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/shipments
+            Method: GET
+        ApiPost:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/shipments
+            Method: POST
+        ApiID:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/shipments/{id}
+            Method: GET
 
 
 Outputs:

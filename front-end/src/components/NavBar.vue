@@ -8,6 +8,11 @@
       Taran's Lumber Yard
     </b-navbar-brand>
     <b-navbar-nav class="ml-auto">
+      <b-nav-item 
+        @click="$emit('goToInventory')"
+      >
+        Inventory Page
+      </b-nav-item>
       <b-nav-item @click="$emit('goToOrders')">
         Orders
       </b-nav-item>
