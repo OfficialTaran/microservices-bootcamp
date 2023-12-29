@@ -11,7 +11,6 @@
 import { displayDate } from '@utils/date.js'
 import { mapState } from 'vuex'
 import Spinner from '@common/LoadingSpinner.vue'
-import Icon from '@common/Icon.vue'
 
 export default {
   name: 'ShipmentsMain',
@@ -19,8 +18,7 @@ export default {
     await this.load()
   },
   components: {
-    Spinner,
-    Icon
+    Spinner
   },
   computed: {
     ...mapState({

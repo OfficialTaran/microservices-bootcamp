@@ -12,13 +12,9 @@
 <script>
 import { mapState } from 'vuex'
 import { displayDate } from '@utils/date.js'
-import ModalInput from '@common/ModalInput.vue'
 
 export default {
   name: 'OrderInfo',
-  components: {
-    ModalInput
-  },
   computed: {
     ...mapState({
       shipment: state => state.shipments.shipment,
