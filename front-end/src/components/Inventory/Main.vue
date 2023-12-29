@@ -11,14 +11,6 @@
           {{ item.display }}
         </b-nav-item>
       </b-nav>
-      <Icon
-        v-if="display_add_button"
-        :tooltip="add_button_text"
-        variant="primary"
-        scale="2.5"
-        icon="plus-square"
-        @click="clickNew()"
-      />
     </div>
     <Shipments 
       v-if="selected_page === 'shipments'"
@@ -30,13 +22,11 @@
 <script>
 
 import Shipments from './Shipments/Shipments.vue'
-import Icon from '@common/Icon.vue'
 
 export default {
   name: 'InventoryMain',
   components: {
-    Shipments,
-    Icon
+    Shipments
   },
   data() {
     return {
