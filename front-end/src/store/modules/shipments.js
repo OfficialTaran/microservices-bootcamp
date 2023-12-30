@@ -11,7 +11,7 @@ const state = {
 
 const actions = {
   async listShipments ({ commit, state }, reset_cache = false) {
-
+    //ignore if cashed
     if (JSON.stringify(state.shipment_list) !== '[]'
       && !reset_cache) return
 
@@ -25,7 +25,7 @@ const actions = {
     commit('setLoading', { loading: false })
   },
   async getShipment ({ commit, state }, { id }) {
-
+    //ignore if cashed
     if ((JSON.stringify(state.shipment) !== '{}')
       && (state.shipment.id === id)) return
 
