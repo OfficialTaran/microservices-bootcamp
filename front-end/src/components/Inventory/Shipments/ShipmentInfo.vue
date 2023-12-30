@@ -5,16 +5,33 @@
     size="lg"
     ok-only
   >
-    {{ shipment }}
+    <ModalInput
+      v-for="(item, key) in properties"
+      :key="`property_${key}`"
+      :loading="loading"
+      :label="item.label"
+      :value="item.value"
+    />
+    <b-table
+      v-if="!loading"
+      striped
+      hover
+      class="mt-4"
+      :items="shipment.goods_received"
+    />
   </b-modal> 
 </template>
     
 <script>
 import { mapState } from 'vuex'
 import { displayDate } from '@utils/date.js'
+import ModalInput from '@common/ModalInput.vue'
 
 export default {
   name: 'OrderInfo',
+  components: {
+    ModalInput
+  },
   computed: {
     ...mapState({
       shipment: state => state.shipments.shipment,

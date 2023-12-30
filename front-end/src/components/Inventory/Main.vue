@@ -11,6 +11,14 @@
           {{ item.display }}
         </b-nav-item>
       </b-nav>
+      <Icon
+        v-if="display_add_button"
+        :tooltip="add_button_text"
+        variant="primary"
+        scale="2.5"
+        icon="plus-square"
+        @click="clickNew()"
+      />
     </div>
     <Shipments 
       v-if="selected_page === 'shipments'"
@@ -21,12 +29,24 @@
   
 <script>
 
+const pages_with_add_button = [
+  'shipments',
+  'products'
+]
+
+const add_text_map = {
+  shipments: 'New Shipment',
+  products: 'New Product'
+}
+
 import Shipments from './Shipments/Shipments.vue'
+import Icon from '@common/Icon.vue'
 
 export default {
   name: 'InventoryMain',
   components: {
-    Shipments
+    Shipments,
+    Icon
   },
   data() {
     return {
@@ -49,6 +69,19 @@ export default {
         }
       ],
       selected_page: 'shipments'
+    }
+  },
+  computed: {
+    display_add_button () {
+      return pages_with_add_button.includes(this.selected_page)
+    },
+    add_button_text () {
+      return this.display_add_button ? add_text_map[this.selected_page] : ''
+    }
+  },
+  methods: {
+    clickNew () {
+      this.$refs[this.selected_page].new()
     }
   }
 }

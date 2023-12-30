@@ -2,7 +2,28 @@
   <div>
     <Spinner v-if="loading"/>
     <div v-else>
-      {{ shipments }}
+      <b-card
+        v-for="(item,key) in shipments"
+        :key="`list_item_${key}`"
+        class="mt-2"
+      >
+        <div class="d-flex justify-content-between">
+          <div class="inline-card-text">{{ displayDate(item.date_received) }}</div>
+          <Icon
+            tooltip="Shipment Info"
+            scale="2"
+            variant="info"
+            icon="info-circle"
+            @click="openShipmentModal(item.id)"
+          />
+        </div>
+      </b-card>
+      <ShipmentInfo
+        ref="shipment-info-modal"
+      />
+      <NewShipment
+        ref="new-shipment-modal"
+      />
     </div>
   </div>
 </template>
@@ -11,6 +32,9 @@
 import { displayDate } from '@utils/date.js'
 import { mapState } from 'vuex'
 import Spinner from '@common/LoadingSpinner.vue'
+import Icon from '@common/Icon.vue'
+import ShipmentInfo from './ShipmentInfo.vue'
+import NewShipment from './NewShipment.vue'
 
 export default {
   name: 'ShipmentsMain',
@@ -18,7 +42,10 @@ export default {
     await this.load()
   },
   components: {
-    Spinner
+    Spinner,
+    Icon,
+    ShipmentInfo,
+    NewShipment
   },
   computed: {
     ...mapState({
@@ -30,6 +57,12 @@ export default {
     displayDate,
     async load () {
       await this.$store.dispatch('shipments/listShipments')
+    },
+    openShipmentModal ( id ) {
+      this.$refs['shipment-info-modal'].open(id)
+    },
+    new () {
+      this.$refs['new-shipment-modal'].open()
     }
   }
 }

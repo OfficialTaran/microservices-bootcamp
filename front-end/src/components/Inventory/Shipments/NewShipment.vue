@@ -6,7 +6,38 @@
     :ok-disabled="!updates"
     @ok="submitNewShipment"
   >
-    {{ shipment }}
+    <div class="d-flex justify-content-end">
+      <b-button
+        variant="primary"
+        @click="addRow"
+      >
+        Add Item
+      </b-button>
+    </div>
+    <b-table
+      striped
+      hover
+      class="mt-4"
+      :fields="fields"
+      :items="shipment.goods_received"
+    >
+      <template #cell()="data">
+        <b-form-input
+          :value="data.value"
+          type="text"
+          @update="value => updateField(data.index, data.field.key, value)"
+        />
+      </template>
+      <template #cell(remove_button)="data">
+        <b-icon-x-circle
+          variant="danger"
+          font-scale="2"
+          shift-v="-1"
+          class="clickable"
+          @click="removeRow(data.index)"
+        />
+      </template>
+    </b-table>
     <Spinner
       v-if="posting"
       small
@@ -17,7 +48,11 @@
 <script>
 import { mapState } from 'vuex'
 import Spinner from '@common/LoadingSpinner.vue'
+import { isEqual } from 'lodash'
 
+const blank_shipment = {
+  goods_received: []
+}
 
 export default {
   name: 'NewShipment',
@@ -28,7 +63,10 @@ export default {
     ...mapState({
       shipment: state => state.shipments.shipment,
       posting: state => state.shipments.posting_new_shipment
-    })
+    }),
+    updates () {
+      return ! isEqual(blank_shipment, this.shipment)
+    }
   },
   data() {
     return {
@@ -43,6 +81,20 @@ export default {
     open () {
       this.$refs['new-shipment-modal'].show()
       this.$store.commit('shipments/startNewShipment')
+    },
+    addRow () {
+      this.$store.commit('shipments/addRowToShipment')
+    },
+    removeRow ( index ) {
+      this.$store.commit('shipments/removeRowFromShipment', { index })
+    },
+    updateField ( index, field, value ) {
+      this.$store.commit('shipments/updateNewShipmentField',
+      { index, field, value})
+    },
+    async submitNewShipment ( bvModalEvent ) {
+      bvModalEvent.preventDefault()
+      await this.$store.dispatch('shipments/postNewShipment')
     }
   }
 }

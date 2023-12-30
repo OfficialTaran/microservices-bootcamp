@@ -4,10 +4,12 @@
       @goHome="page='products'"
       @goToCart="page='cart'"
       @goToOrders="page='orders'"
+      @goToInventory="page='inventory'"
     />
     <Products v-if="page === 'products'"/>
     <Cart v-else-if="page === 'cart'"/>
     <Orders v-else-if="page === 'orders'"/>
+    <Inventory v-else-if="page === 'inventory'"/>
   </div>
 </template>
 
@@ -16,6 +18,7 @@ import Products from './components/Products/Products.vue'
 import NavBar from './components/NavBar.vue'
 import Cart from './components/Cart.vue'
 import Orders from './components/Orders/Orders.vue'
+import Inventory from './components/Inventory/Main.vue'
 
 export default {
   name: 'App',
@@ -23,7 +26,8 @@ export default {
     Products,
     NavBar,
     Cart,
-    Orders
+    Orders,
+    Inventory
   },
   data () {
     return {
