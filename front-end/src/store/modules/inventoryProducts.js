@@ -11,7 +11,7 @@ const state = {
 }
 
 const actions = {
-  async listProducts ({ commit, state }, reset_cache = true) {
+  async listProducts ({ commit, state }, reset_cache = false) {
     //ignore if cashed
     if (JSON.stringify(state.product_list) !== '[]'
       && !reset_cache) return
