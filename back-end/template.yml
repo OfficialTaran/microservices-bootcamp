@@ -172,6 +172,40 @@ Resources:
             RestApiId: !Ref BackendApi
             Path: /api/inventory/shipments/{id}
             Method: GET
+  inventoryProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.rootHandler
+      Runtime: nodejs16.x
+      CodeUri: src/InventoryProducts
+      Timeout: 10
+      Layers:
+        - !Ref SharedLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/products
+            Method: GET
+        ApiPost:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/products
+            Method: POST
+        ApiID:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/products/{id}
+            Method: GET
+        ApiIDPut:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/products/{id}
+            Method: PUT
 
 
 Outputs:

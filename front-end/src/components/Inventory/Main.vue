@@ -24,6 +24,10 @@
       v-if="selected_page === 'shipments'"
       ref="shipments"
     />
+    <Products 
+      v-else-if="selected_page === 'products'"
+      ref="products"
+    />
   </div>
 </template>
   
@@ -41,12 +45,14 @@ const add_text_map = {
 
 import Shipments from './Shipments/Shipments.vue'
 import Icon from '@common/Icon.vue'
+import Products from './Products/Products.vue'
 
 export default {
   name: 'InventoryMain',
   components: {
     Shipments,
-    Icon
+    Icon,
+    Products
   },
   data() {
     return {
