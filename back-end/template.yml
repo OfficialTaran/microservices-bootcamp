@@ -176,7 +176,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.rootHandler
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       CodeUri: src/InventoryProducts
       Timeout: 10
       Layers:
