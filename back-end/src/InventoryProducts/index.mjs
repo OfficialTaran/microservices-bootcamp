@@ -21,16 +21,49 @@ const handlers = {
   },
   POST: async ({ body = null }) => {
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ msg: 'hello' })
+    const validation_data = validateObject({
+      schema: 'products',
+      object: body
+    })
+
+    if ( validation_data.length > 0 ) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ errors: validation_data })
+      }
     }
+
+    return await PromiseHandler(InsertItem({
+      TableName: 'products',
+      data: body
+    }))
+
   },
   PUT: async ({ id = null, body = null }) => {
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ msg: 'hello' })
+    const validation_data = validateObject({
+      schema: 'products',
+      object: body
+    })
+
+    if ( validation_data.length > 0 ) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ errors: validation_data })
+      }
     }
+
+    return await PromiseHandler(Statement('UPDATE products SET name=? SET unit_quantity=? ' 
+      + 'SET nominal_dimensions.thickness=? SET nominal_dimensions.width=? '
+      + 'SET nominal_dimensions.length=? SET in_stock=?'
+      + 'WHERE id=?', [
+        body.name,
+        body.unit_quantity,
+        body.nominal_dimensions.thickness,
+        body.nominal_dimensions.width,
+        body.nominal_dimensions.length,
+        body.in_stock,
+        id
+      ]))
   }
 }

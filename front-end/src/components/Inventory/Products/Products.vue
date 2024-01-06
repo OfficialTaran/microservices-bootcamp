@@ -23,7 +23,10 @@
     </div>
     <ProductInfo 
       ref="product-info-modal"
-      modal_action="update"
+    />
+    <ProductInfo
+      ref="new-product-modal"
+      modal_action="new"
     />
   </div>
 </template>
@@ -59,7 +62,7 @@ export default {
       this.$refs['product-info-modal'].open(id)
     },
     new () {
-      console.log('new')
+      this.$refs['new-product-modal'].open()
     }
   }
 }
