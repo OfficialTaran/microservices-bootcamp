@@ -28,7 +28,7 @@ import { displayDate } from '@utils/date.js'
 import ModalInput from '@common/ModalInput.vue'
 
 export default {
-  name: 'OrderInfo',
+  name: 'ShipmentInfo',
   components: {
     ModalInput
   },
