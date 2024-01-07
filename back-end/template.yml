@@ -206,6 +206,34 @@ Resources:
             RestApiId: !Ref BackendApi
             Path: /api/inventory/products/{id}
             Method: PUT
+  inventoryOrdersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.rootHandler
+      Runtime: nodejs18.x
+      CodeUri: src/OrderPicking
+      Timeout: 10
+      Layers:
+        - !Ref SharedLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/orders
+            Method: GET
+        ApiID:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/orders/{id}
+            Method: GET
+        ApiIDPatch:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BackendApi
+            Path: /api/inventory/orders/{id}
+            Method: PATCH
 
 
 Outputs:

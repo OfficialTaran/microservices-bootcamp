@@ -28,6 +28,10 @@
       v-else-if="selected_page === 'products'"
       ref="products"
     />
+    <OrderPicking 
+      v-else-if="selected_page === 'order_picking'"
+      orders_state="needs_picked"
+    />
   </div>
 </template>
   
@@ -46,13 +50,15 @@ const add_text_map = {
 import Shipments from './Shipments/Shipments.vue'
 import Icon from '@common/Icon.vue'
 import Products from './Products/Products.vue'
+import OrderPicking from './OrderPicking/OrderPicking.vue'
 
 export default {
   name: 'InventoryMain',
   components: {
     Shipments,
     Icon,
-    Products
+    Products,
+    OrderPicking
   },
   data() {
     return {
