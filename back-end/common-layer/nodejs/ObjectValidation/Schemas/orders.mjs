@@ -50,10 +50,6 @@ const orders = new Schema({
 })
 
 const ordersPatch = new Schema({
-  id: {
-    type: String,
-    required: true
-  },
   state: {
     type: String,
     required: true,
