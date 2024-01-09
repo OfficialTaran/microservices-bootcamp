@@ -30,7 +30,13 @@
     />
     <OrderPicking 
       v-else-if="selected_page === 'order_picking'"
+      key="order_picking"
       orders_state="needs_picked"
+    />
+    <OrderPicking 
+      v-else-if="selected_page === 'order_pickup'"
+      key="order_pickup"
+      orders_state="staged"
     />
   </div>
 </template>

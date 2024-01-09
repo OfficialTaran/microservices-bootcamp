@@ -19,7 +19,8 @@ const actions = {
     commit('setLoading', { loading: true })
 
     const orders = await makeAPICall({ 
-      route: '/api/inventory/orders'
+      route: '/api/inventory/orders',
+      params: { state: orders_state }
     })
       .then(res => res.data)
       .catch(err => console.error(err))
@@ -43,7 +44,16 @@ const actions = {
   async updateOrder ({ commit, dispatch, state }, { id, staging_location, order_state }) {
     commit('setUpdatingOrder', { staging: true })
 
-    console.log( id, staging_location, order_state )
+    const data = {
+      staging_location,
+      state: order_state
+    }
+
+    makeAPICall({
+      route: `/api/inventory/orders/${id}`,
+      verb: 'PATCH',
+      data
+    })
 
     dispatch('listOrders',{ reset_cache: true, orders_state: state.displayed_orders_state })
     commit('setUpdatingOrder', { staging: false })
