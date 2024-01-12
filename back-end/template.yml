@@ -2,6 +2,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform:
   - AWS::Serverless-2016-10-31
 
+Parameters:
+  STAGE:
+    Type: String
+    Description: Passed in as STAGE env to functions
+    Default: prod
+
 Resources:
   # ##############################################################################
   # Front End
@@ -95,6 +101,11 @@ Resources:
       Runtime: nodejs18.x
       CodeUri: src/Products
       Timeout: 10
+      Environment:
+        Variables:
+          STAGE: !Ref STAGE
+      Policies:
+        - !Ref dynamoDBPolicy
       Layers:
         - !Ref SharedLayer
       Events:
@@ -117,6 +128,11 @@ Resources:
       Runtime: nodejs18.x
       CodeUri: src/Orders
       Timeout: 10
+      Environment:
+        Variables:
+          STAGE: !Ref STAGE
+      Policies:
+        - !Ref dynamoDBPolicy
       Layers:
         - !Ref SharedLayer
       Events:
@@ -151,6 +167,11 @@ Resources:
       Runtime: nodejs18.x
       CodeUri: src/Shipments
       Timeout: 10
+      Environment:
+        Variables:
+          STAGE: !Ref STAGE
+      Policies:
+        - !Ref dynamoDBPolicy
       Layers:
         - !Ref SharedLayer
       Events:
@@ -179,6 +200,11 @@ Resources:
       Runtime: nodejs18.x
       CodeUri: src/InventoryProducts
       Timeout: 10
+      Environment:
+        Variables:
+          STAGE: !Ref STAGE
+      Policies:
+        - !Ref dynamoDBPolicy
       Layers:
         - !Ref SharedLayer
       Events:
@@ -213,6 +239,11 @@ Resources:
       Runtime: nodejs18.x
       CodeUri: src/OrderPicking
       Timeout: 10
+      Environment:
+        Variables:
+          STAGE: !Ref STAGE
+      Policies:
+        - !Ref dynamoDBPolicy
       Layers:
         - !Ref SharedLayer
       Events:
@@ -235,6 +266,55 @@ Resources:
             Path: /api/inventory/orders/{id}
             Method: PATCH
 
+  productsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: products
+      PrimaryKey:
+        Name: id
+        Type: String
+  ordersTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: orders
+      PrimaryKey:
+        Name: id
+        Type: String
+  shipmentsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: shipments
+      PrimaryKey:
+        Name: id
+        Type: String
+
+  dynamoDBPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: DynamoDBAccess
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - dynamodb:GetItem
+          - dynamodb:DeleteItem
+          - dynamodb:PutItem
+          - dynamodb:Scan
+          - dynamodb:Query
+          - dynamodb:UpdateItem
+          - dynamodb:BatchWriteItem
+          - dynamodb:BatchGetItem
+          - dynamodb:DescribeTable
+          - dynamodb:ConditionCheckItem
+          - dynamodb:PartiQLUpdate
+          - dynamodb:PartiQLSelect
+          - dynamodb:PartiQLInsert
+          - dynamodb:PartiQLDelete
+          Resource:
+          - !GetAtt shipmentsTable.Arn
+          - !GetAtt ordersTable.Arn
+          - !GetAtt productsTable.Arn
 
 Outputs:
   WebEndpoint:

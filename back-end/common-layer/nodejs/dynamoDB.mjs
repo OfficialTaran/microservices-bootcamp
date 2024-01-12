@@ -2,9 +2,12 @@ import { DynamoDBClient, ExecuteStatementCommand, PutItemCommand } from "@aws-sd
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb"
 import { v4 as uuidv4 } from "uuid"
 
-const DynamoClient = new DynamoDBClient({
-  endpoint: "http://dynamo-local:8000"
-})
+
+const client_props = (process.env.STAGE === 'dev')  
+  ? { endpoint: "http://dynamo-local:8000" }
+  : {}
+
+const DynamoClient = new DynamoDBClient(client_props)
 
 /**
  * Run a PartiQL statement against DynamoDB
