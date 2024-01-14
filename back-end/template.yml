@@ -7,6 +7,9 @@ Parameters:
     Type: String
     Description: Passed in as STAGE env to functions
     Default: prod
+  AuthDomainPrefix:
+    Type: String
+    Description: The URL prefix for cognito
 
 Resources:
   # ##############################################################################
@@ -80,6 +83,53 @@ Resources:
     Properties:
       StageName: Prod
       Cors: "'*'"
+      Auth:
+        DefaultAuthorizer: CustomerAuthorizer
+        Authorizers:
+          CustomerAuthorizer:
+            UserPoolArn: !GetAtt CustomerUserPool.Arn
+  CustomerUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: CustomerUserPool
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+      UsernameAttributes:
+        - email
+      Schema:
+        - AttributeDataType: String
+          Name: email
+          Required: false
+  CustomerCognitoClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      AllowedOAuthFlowsUserPoolClient: True
+      UserPoolId: !Ref CustomerUserPool
+      ClientName: CustomerCognitoClient
+      GenerateSecret: false
+      CallbackURLs:
+        - !Sub "https://${myDistribution.DomainName}"
+        - http://localhost:8080
+      LogoutURLs:
+        - !Sub "https://${myDistribution.DomainName}"
+        - http://localhost:8080
+      SupportedIdentityProviders:
+        - COGNITO
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - aws.cognito.signin.user.admin
+        - openid
+        - phone
+        - email
+        - profile
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Ref AuthDomainPrefix
+      UserPoolId: !Ref CustomerUserPool
+
 
   # ##############################################################################
   # Functions       
@@ -115,12 +165,16 @@ Resources:
             RestApiId: !Ref BackendApi
             Path: /api/products
             Method: GET
+            Auth:
+              Authorizer: NONE
         ApiID:
           Type: Api
           Properties:
             RestApiId: !Ref BackendApi
             Path: /api/products/{id}
             Method: GET
+            Auth:
+              Authorizer: NONE
   OrdersFunction:
     Type: AWS::Serverless::Function
     Properties:
