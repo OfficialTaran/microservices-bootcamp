@@ -5,6 +5,7 @@
       @goToCart="page='cart'"
       @goToOrders="page='orders'"
       @goToInventory="page='inventory'"
+      ref="navbar"
     />
     <Products v-if="page === 'products'"/>
     <Cart v-else-if="page === 'cart'"/>
@@ -20,6 +21,8 @@ import Cart from './components/Cart.vue'
 import Orders from './components/Orders/Orders.vue'
 import Inventory from './components/Inventory/Main.vue'
 
+import { tokenExchange } from '@utils/api'
+
 export default {
   name: 'App',
   components: {
@@ -33,6 +36,10 @@ export default {
     return {
       page: 'products'
     }
+  },
+  async mounted () {
+    await tokenExchange()
+    this.$refs['navbar'].loadUserProfile()
   }
 }
 </script>

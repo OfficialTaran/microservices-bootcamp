@@ -1,8 +1,15 @@
 import { Statement, InsertItem } from '/opt/nodejs/dynamoDB.mjs'
 import { validateObject } from '/opt/nodejs/ObjectValidation/index.mjs'
-import { PromiseHandler } from '/opt/nodejs/Utils.mjs'
+import { PromiseHandler, verifyEmployee } from '/opt/nodejs/Utils.mjs'
 
 export async function rootHandler(event) {
+
+  if (! verifyEmployee(event.requestContext.authorizer)) {
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ msg: 'Resource Not Found' })
+    }
+  }
 
   const body = JSON.parse(event.body || '{}')
   const id = (event.pathParameters && ('id' in event.pathParameters)) ?

@@ -5,7 +5,9 @@ import { BadProductIDError, InvalidQuantityError } from '/opt/nodejs/Errors.mjs'
 
 export const rootHandler = async (event) => {
 
-  const user_id = '1'
+  const user_id = (process.env.STAGE == 'dev')
+    ? '1'
+    : event.requestContext.authorizer.claims['cognito:username']
   const body = JSON.parse(event.body || '{}')
   const id = (event.pathParameters && ('id' in event.pathParameters)) ?
     event.pathParameters.id : null
