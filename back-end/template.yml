@@ -383,3 +383,9 @@ Outputs:
   BucketName:
     Value: !Ref StaticBucket
     Description: Name of S3 bucket holding Front End Content. For aws s3 sync
+  CognitoPoolId:
+    Value: !Ref CustomerUserPool
+    Description: Cognito User Pool ID (Needed in Vue Config)
+  CognitoClientId:
+    Value: !Ref CustomerCognitoClient
+    Description: Cognito Client ID (Needed in Vue Config)
