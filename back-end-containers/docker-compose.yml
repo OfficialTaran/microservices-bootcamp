@@ -11,8 +11,10 @@ services:
     networks:
       - local_dev_bridge
     volumes:
+      - ./api:/usr/src
+      - ./common:/opt/nodejs
       - ~/.aws/:/root/.aws:ro
-    command: npm run start
+    command: npm run dev
 
   inventory-api:
     build:
@@ -25,8 +27,10 @@ services:
     networks:
       - local_dev_bridge
     volumes:
+      - ./inventoryApi:/usr/src
+      - ./common:/opt/nodejs
       - ~/.aws/:/root/.aws:ro
-    command: npm run start
+    command: npm run dev
 
   dynamo-local:
     image: amazon/dynamodb-local

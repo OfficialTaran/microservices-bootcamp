@@ -3,9 +3,19 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon -L index.js"
   },
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "/opt/nodejs",
+      "/usr/src"
+    ]
   }
 }
