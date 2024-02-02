@@ -1,23 +1,16 @@
 /**
- * Handle a promise and turn response into a lambda response object
+ * Handle a promise and turn response into an Express response
  * 
  * @param {Promise} prom Unresolved promise
- * @returns {Promise} A promise that will resolve to a lambda response object
+ * @param {object} res Express response object
+ * @returns {Promise}
  */
-const PromiseHandler = ( prom ) => {
+const PromiseHandler = ( prom, res ) => {
   return prom.then(data => {
-    return {
-      statusCode: 200,
-      body: JSON.stringify(data)
-    }
-  }).catch(error => {
+    res.json(data)
+  }).catch( error => {
     console.error(error)
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        msg: 'Internal Service Error'
-      })
-    }
+    res.status(500)
   })
 }
 
