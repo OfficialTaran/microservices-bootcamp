@@ -2,9 +2,11 @@ import { Statement, InsertItem } from '/opt/nodejs/dynamoDB.mjs'
 import { PromiseHandler } from '/opt/nodejs/Utils.mjs'
 import { validateObject } from '/opt/nodejs/ObjectValidation/index.mjs'
 import { BadProductIDError, InvalidQuantityError } from '/opt/nodejs/Errors.mjs'
+import { authFunction } from '../auth.js'
 
 import express from 'express'
 const router = express.Router()
+router.use(authFunction)
 
 const state_map = {
   needs_picked: 'In Progress',
@@ -19,7 +21,7 @@ const cancellable_states = [
 ]
 
 router.get('/', async (req,res) => {
-  const response = Statement(`SELECT state, date_created, id, customer FROM orders WHERE customer='1'`)
+  const response = Statement(`SELECT state, date_created, id, customer FROM orders WHERE customer='${req.user_id}'`)
 
   await PromiseHandler(response.then(data => {
     data = data.map(item => {
@@ -50,7 +52,7 @@ router.post('/', async (req, res) => {
     state: 'needs_picked',
     staging_location: 'none',
     date_created: date_now.toISOString(),
-    customer: '1'
+    customer: req.user_id
   }
 
   const data = { ...body, ...defined_data }
@@ -93,7 +95,7 @@ router.delete('/:id', async (req, res) => {
       return
     }
 
-    if (order.customer !== '1') {
+    if (order.customer !== req.user_id) {
       res.status(404).json({ msg: `Can't access info for order ${req.params.id}` })
       return
     }
