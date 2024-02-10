@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api
+spec:
+  containers:
+  - name: api
+    image: {aws_account_id}.dkr.ecr.{aws_region}.amazonaws.com/lumberyardapi:{tag}
+    ports:
+      - containerPort: 80
+    env:
+    - name: AWS_REGION
+      value: {aws_region}
+    - name: COGNITO_POOL_ID
+      value: {cognito_pool_id}
